@@ -1,19 +1,22 @@
-package dev.wotq.keepinventory.mixin;
+package de.xenonlightz.keepinventory.mixin;
 
 import com.mojang.authlib.GameProfile;
+
+import de.xenonlightz.keepinventory.bridge.PlayerEntityBridge;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+
+import static de.xenonlightz.keepinventory.bridge.PlayerEntityBridge.from;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import static dev.wotq.keepinventory.bridge.PlayerEntityBridge.bridge;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
@@ -27,14 +30,20 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
      * Only interferes if key is KEEP_INVENTORY.
      *
      * @param rules object getBoolean is being called on
-     * @param key argument getBoolean is being called with
+     * @param key   argument getBoolean is being called with
      *
-     * @return $wotq_keepInventory if it is true or false, otherwise the gamerule's value
+     * @return $wotq_keepInventory if it is true or false, otherwise the gamerule's
+     *         value
      */
     @Redirect(method = "copyFrom", at = @At(value = "INVOKE", target = "net/minecraft/world/GameRules.getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
-    public boolean onCopyFrom(GameRules rules, GameRules.Key<GameRules.BooleanRule> key, ServerPlayerEntity oldPlayer) {
+    public boolean onCopyFrom(GameRules rules,
+                              GameRules.Key<GameRules.BooleanRule> key,
+                              ServerPlayerEntity oldPlayer) {
         if (key.getName().equals("keepInventory")) {
-            return bridge(oldPlayer).$wotq_getKeepInventory().orElseGet(() -> rules.getBoolean(key));
+            final var bridge = PlayerEntityBridge.from( oldPlayer );
+
+            return bridge.$zireael_getKeepInventory()
+                .orElseGet( () -> rules.getBoolean( key ) );
         } else {
             return rules.getBoolean(key);
         }
@@ -51,6 +60,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
      */
     @Inject(method = "copyFrom", at = @At(value = "RETURN"))
     public void onCopyFrom(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo callback) {
-        bridge(this).$wotq_setKeepInventory(bridge(oldPlayer).$wotq_getKeepInventory());
+        final var bridge = PlayerEntityBridge.from( this );
+        final var oldPlayerBridge = PlayerEntityBridge.from( oldPlayer );
+        
+        bridge.$zireael_setKeepInventory(
+            oldPlayerBridge.$zireael_getKeepInventory()
+        );
     }
 }

@@ -1,15 +1,12 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "dev.wotq.keepinventory.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "PlayerEntityMixin",
-    "ServerPlayerEntityMixin"
-  ],
-  "client": [
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+	"required": true,
+	"package": "de.xenonlightz.keepinventory.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"PlayerEntityMixin",
+		"ServerPlayerEntityMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
 }

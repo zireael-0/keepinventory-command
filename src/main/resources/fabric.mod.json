@@ -1,32 +1,34 @@
 {
-  "schemaVersion": 1,
-  "id": "keepinventory-command",
-  "version": "${version}",
-  "name": "KeepInventory Command",
-  "description": "Adds the /keepinventory command which allows a per-player version of the gamerule.",
-  "authors": [
-    "WayOfTheQway"
-  ],
-  "contact": {
-    "homepage": "https://wotq.dev/",
-    "sources": "https://github.com/rjb3977/keepinventory-command/"
-  },
-  "license": "CC0-1.0",
-  "icon": "assets/keepinventory-command/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "dev.wotq.keepinventory.KeepInventoryMod"
-    ]
-  },
-  "mixins": [
-    "keepinventory.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": "*",
-    "minecraft": "1.16.x"
-  },
-  "suggests": {
-  }
+	"schemaVersion": 1,
+	"id": "configurable-keepinventory",
+	"version": "1.0.0",
+	"name": "Configurable KeepInventory",
+	"description": "There is no description yet.",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/zireael-0/keepinventory-command"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/template-mod/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"de.xenonlightz.keepinventory.KeepInventoryMod"
+		]
+	},
+	"mixins": [
+		"keepinventory.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
 }

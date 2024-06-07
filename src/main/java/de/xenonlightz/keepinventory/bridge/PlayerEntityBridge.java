@@ -1,4 +1,4 @@
-package dev.wotq.keepinventory.bridge;
+package de.xenonlightz.keepinventory.bridge;
 
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -18,10 +18,12 @@ public interface PlayerEntityBridge {
      * @param player the player
      * @return the player as a PlayerEntityBridge
      */
-    static PlayerEntityBridge bridge(PlayerEntity player) {
+    static PlayerEntityBridge from(PlayerEntity player) {
         return (PlayerEntityBridge) player;
     }
+    
+    static final String NBT_NAME = "$zireael_keepInventory";
 
-    Optional<Boolean> $wotq_getKeepInventory();
-    void $wotq_setKeepInventory(Optional<Boolean> value);
+    Optional<Boolean> $zireael_getKeepInventory();
+    void $zireael_setKeepInventory(Optional<Boolean> value);
 }

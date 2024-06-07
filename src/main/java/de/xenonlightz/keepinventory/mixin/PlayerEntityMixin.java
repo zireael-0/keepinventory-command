@@ -1,14 +1,15 @@
-package dev.wotq.keepinventory.mixin;
+package de.xenonlightz.keepinventory.mixin;
 
-import dev.wotq.keepinventory.bridge.PlayerEntityBridge;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import de.xenonlightz.keepinventory.bridge.PlayerEntityBridge;
 
 import java.util.Optional;
 
@@ -17,15 +18,15 @@ public class PlayerEntityMixin implements PlayerEntityBridge {
     /**
      * The per-player keepInventory flag.
      */
-    private Optional<Boolean> $wotq_keepInventory;
+    private Optional<Boolean> $zireael_keepInventory;
 
     /**
      * Getter for $wotq_keepInventory.
      *
      * @return value of $wotq_keepInventory
      */
-    public Optional<Boolean> $wotq_getKeepInventory() {
-        return $wotq_keepInventory;
+    public Optional<Boolean> $zireael_getKeepInventory() {
+        return $zireael_keepInventory;
     }
 
     /**
@@ -33,8 +34,8 @@ public class PlayerEntityMixin implements PlayerEntityBridge {
      *
      * @param value value of $wotq_keepInventory
      */
-    public void $wotq_setKeepInventory(Optional<Boolean> value) {
-        $wotq_keepInventory = value;
+    public void $zireael_setKeepInventory(Optional<Boolean> value) {
+        $zireael_keepInventory = value;
     }
 
     /**
@@ -44,7 +45,7 @@ public class PlayerEntityMixin implements PlayerEntityBridge {
      */
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     public void onInit(CallbackInfo callback) {
-        $wotq_keepInventory = Optional.empty();
+        $zireael_keepInventory = Optional.empty();
     }
 
     /**
@@ -53,12 +54,12 @@ public class PlayerEntityMixin implements PlayerEntityBridge {
      * @param tag tag to read the data from
      * @param callback
      */
-    @Inject(method = "readCustomDataFromTag", at = @At(value = "RETURN"))
-    public void onReadCustomDataFromTag(CompoundTag tag, CallbackInfo callback) {
-        if (tag.contains("$wotq_keepInventory")) {
-            $wotq_keepInventory = Optional.of(tag.getBoolean("$wotq_keepInventory"));
+    @Inject(method = "readCustomDataFromNbt", at = @At(value = "RETURN"))
+    public void onReadCustomDataFromTag(NbtCompound nbt, CallbackInfo callback) {
+        if ( nbt.contains( PlayerEntityBridge.NBT_NAME ) ) {
+            $zireael_keepInventory = Optional.of( nbt.getBoolean( PlayerEntityBridge.NBT_NAME ) );
         } else {
-            $wotq_keepInventory = Optional.empty();
+            $zireael_keepInventory = Optional.empty();
         }
     }
 
@@ -68,9 +69,9 @@ public class PlayerEntityMixin implements PlayerEntityBridge {
      * @param tag tag to write the data to
      * @param callback
      */
-    @Inject(method = "writeCustomDataToTag", at = @At(value = "RETURN"))
-    public void onWriteCustomDataToTag(CompoundTag tag, CallbackInfo callback) {
-        $wotq_keepInventory.ifPresent(value -> tag.putBoolean("$wotq_keepInventory", value));
+    @Inject(method = "writeCustomDataToNbt", at = @At(value = "RETURN"))
+    public void onWriteCustomDataToTag( NbtCompound nbt, CallbackInfo callback ) {
+        $zireael_keepInventory.ifPresent(value -> nbt.putBoolean(PlayerEntityBridge.NBT_NAME , value));
     }
 
     /**
@@ -86,7 +87,7 @@ public class PlayerEntityMixin implements PlayerEntityBridge {
     @Redirect(method = "dropInventory", at = @At(value = "INVOKE", target = "net/minecraft/world/GameRules.getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
     public boolean onDropInventory(GameRules rules, GameRules.Key<GameRules.BooleanRule> key) {
         if (key.getName().equals("keepInventory")) {
-            return this.$wotq_keepInventory.orElseGet(() -> rules.getBoolean(key));
+            return this.$zireael_keepInventory.orElseGet( () -> rules.getBoolean(key) );
         } else {
             return rules.getBoolean(key);
         }
@@ -102,10 +103,11 @@ public class PlayerEntityMixin implements PlayerEntityBridge {
      *
      * @return $wotq_keepInventory if it is true or false, otherwise the gamerule's value
      */
-    @Redirect(method = "getCurrentExperience", at = @At(value = "INVOKE", target = "net/minecraft/world/GameRules.getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
-    public boolean onGetCurrentExperience(GameRules rules, GameRules.Key<GameRules.BooleanRule> key) {
+    @Redirect(method = "getXpToDrop", at = @At(value = "INVOKE", target = "net/minecraft/world/GameRules.getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
+    public boolean onGetCurrentExperience( GameRules rules, 
+                                           GameRules.Key<GameRules.BooleanRule> key ) {
         if (key.getName().equals("keepInventory")) {
-            return this.$wotq_keepInventory.orElseGet(() -> rules.getBoolean(key));
+            return this.$zireael_keepInventory.orElseGet( () -> rules.getBoolean(key) );
         } else {
             return rules.getBoolean(key);
         }
